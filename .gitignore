@@ -1,0 +1,22 @@
+# raw downloads are rebuilt by scripts/download_data.py
+data/raw/
+
+# Tableau temp and extract files
+*.hyper
+*.tmp
+~$*
+.DS_Store
+Thumbs.db
+__pycache__/
+
+# analysis and build intermediates
+analysis/*.pkl
+workbook/build/*.twb
+workbook/build/*.json
+# Tableau scratch / lock files
+workbook/probe_*.twbx
+~*.twbr
+*.twbr
+
+# local-only files, never published
+lab-submission/

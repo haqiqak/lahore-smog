@@ -1,0 +1,252 @@
+{
+ "hours_total": 50712,
+ "hours_valid": 36257,
+ "coverage_pct": 71.5,
+ "mean_all": 130.1,
+ "median_all": 82.0,
+ "aqi_share_pct": {
+  "Good": 1.3,
+  "Moderate": 14.4,
+  "USG": 16.8,
+  "Unhealthy": 31.6,
+  "Very Unhealthy": 17.8,
+  "Hazardous": 18.1
+ },
+ "unhealthy_or_worse_pct": 67.4,
+ "valid_days": 1461,
+ "days_over_WHO24_pct": 98.8,
+ "days_over_PakNEQS35_pct": 92.1,
+ "max_day": [
+  "2024-11-14",
+  621.1
+ ],
+ "month_mean": {
+  "1": 219.0,
+  "2": 152.0,
+  "3": 86.0,
+  "4": 71.0,
+  "5": 79.0,
+  "6": 68.0,
+  "7": 52.0,
+  "8": 46.0,
+  "9": 64.0,
+  "10": 137.0,
+  "11": 250.0,
+  "12": 267.0
+ },
+ "dec_vs_aug_ratio": 5.8,
+ "diurnal_smog": {
+  "0": 254.0,
+  "1": 254.0,
+  "2": 251.0,
+  "3": 248.0,
+  "4": 245.0,
+  "5": 241.0,
+  "6": 238.0,
+  "7": 236.0,
+  "8": 246.0,
+  "9": 244.0,
+  "10": 225.0,
+  "11": 208.0,
+  "12": 189.0,
+  "13": 176.0,
+  "14": 163.0,
+  "15": 154.0,
+  "16": 150.0,
+  "17": 157.0,
+  "18": 169.0,
+  "19": 190.0,
+  "20": 212.0,
+  "21": 230.0,
+  "22": 243.0,
+  "23": 251.0
+ },
+ "diurnal_monsoon": {
+  "0": 58.0,
+  "1": 59.0,
+  "2": 58.0,
+  "3": 57.0,
+  "4": 60.0,
+  "5": 61.0,
+  "6": 61.0,
+  "7": 65.0,
+  "8": 64.0,
+  "9": 58.0,
+  "10": 53.0,
+  "11": 49.0,
+  "12": 48.0,
+  "13": 48.0,
+  "14": 47.0,
+  "15": 46.0,
+  "16": 45.0,
+  "17": 45.0,
+  "18": 46.0,
+  "19": 49.0,
+  "20": 52.0,
+  "21": 54.0,
+  "22": 57.0,
+  "23": 58.0
+ },
+ "smog_peak_hour": 0,
+ "smog_min_hour": 16,
+ "smog_peak_to_min": 1.69,
+ "smog_school_hours": {
+  "8": 246.0,
+  "9": 244.0,
+  "10": 225.0,
+  "11": 208.0,
+  "12": 189.0,
+  "13": 176.0,
+  "14": 163.0
+ },
+ "smog_trend": {
+  "2019-20": {
+   "cov": 93.9,
+   "mean": 202.0,
+   "median": 174.0,
+   "haz_hours": 943,
+   "haz_share": 34.0,
+   "vu_or_worse": 70.2
+  },
+  "2020-21": {
+   "cov": 95.3,
+   "mean": 206.0,
+   "median": 178.0,
+   "haz_hours": 974,
+   "haz_share": 34.6,
+   "vu_or_worse": 68.3
+  },
+  "2021-22": {
+   "cov": 58.0,
+   "mean": 221.0,
+   "median": 179.0,
+   "haz_hours": 684,
+   "haz_share": 39.9,
+   "vu_or_worse": 66.6
+  },
+  "2022-23": {
+   "cov": 36.1,
+   "mean": 179.0,
+   "median": 139.0,
+   "haz_hours": 299,
+   "haz_share": 28.1,
+   "vu_or_worse": 53.6
+  },
+  "2023-24": {
+   "cov": 95.0,
+   "mean": 229.0,
+   "median": 227.0,
+   "haz_hours": 1419,
+   "haz_share": 50.6,
+   "vu_or_worse": 74.2
+  },
+  "2024-25": {
+   "cov": 98.0,
+   "mean": 236.0,
+   "median": 205.0,
+   "haz_hours": 1267,
+   "haz_share": 43.8,
+   "vu_or_worse": 75.5
+  }
+ },
+ "stag_smog": {
+  "Stagnant": {
+   "mean": 269.0,
+   "median": 245.0,
+   "count": 2672
+  },
+  "Ventilated": {
+   "mean": 199.0,
+   "median": 170.0,
+   "count": 10767
+  }
+ },
+ "stag_smog_ratio": 1.35,
+ "stag_share_of_hazardous_smog": 29.0,
+ "stag_share_of_hours_smog": 19.9,
+ "blh_quintile_smog": {
+  "Q1 lowest": {
+   "blh": 20.0,
+   "pm": 284.0
+  },
+  "Q2": {
+   "blh": 35.0,
+   "pm": 246.0
+  },
+  "Q3": {
+   "blh": 65.0,
+   "pm": 198.0
+  },
+  "Q4": {
+   "blh": 205.0,
+   "pm": 183.0
+  },
+  "Q5 highest": {
+   "blh": 860.0,
+   "pm": 149.0
+  }
+ },
+ "spearman_daily_smog": {
+  "blh": -0.55,
+  "ws": -0.5,
+  "t": -0.4,
+  "rh": 0.34,
+  "rain": -0.14
+ },
+ "after_rain_vs_dry_nonmonsoon": {
+  "after_rain_mean": 82.0,
+  "after_dry_mean": 178.0,
+  "n_rain_days": 61
+ },
+ "dow_smog": {
+  "Friday": 226.0,
+  "Monday": 206.0,
+  "Saturday": 214.0,
+  "Sunday": 204.0,
+  "Thursday": 229.0,
+  "Tuesday": 204.0,
+  "Wednesday": 225.0
+ },
+ "r2_month_only": 0.169,
+ "r2_month_plus_weather": 0.337,
+ "coef_log_blh": -0.127,
+ "coef_ws_per_kmh": -0.045,
+ "spikes": 17,
+ "missing_hours": 14455,
+ "rain_next_day_ratio_month_matched": 0.49,
+ "rain_days_used": 43,
+ "smog_trend_well_measured": {
+  "2019-20": {
+   "cov": 93.9,
+   "mean": 202.0,
+   "median": 174.0,
+   "haz_hours": 943,
+   "haz_share": 34.0,
+   "vu_or_worse": 70.2
+  },
+  "2020-21": {
+   "cov": 95.3,
+   "mean": 206.0,
+   "median": 178.0,
+   "haz_hours": 974,
+   "haz_share": 34.6,
+   "vu_or_worse": 68.3
+  },
+  "2023-24": {
+   "cov": 95.0,
+   "mean": 229.0,
+   "median": 227.0,
+   "haz_hours": 1419,
+   "haz_share": 50.6,
+   "vu_or_worse": 74.2
+  },
+  "2024-25": {
+   "cov": 98.0,
+   "mean": 236.0,
+   "median": 205.0,
+   "haz_hours": 1267,
+   "haz_share": 43.8,
+   "vu_or_worse": 75.5
+  }
+ }
+}

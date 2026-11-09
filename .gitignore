@@ -17,6 +17,3 @@ workbook/build/*.json
 workbook/probe_*.twbx
 ~*.twbr
 *.twbr
-
-# local-only files, never published
-lab-submission/

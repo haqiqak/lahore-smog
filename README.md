@@ -87,7 +87,7 @@ In total 8,259 of the 44,516 raw readings (18.6%) were invalid, leaving **36,257
 | Stagnant vs ventilated | How much worse is stagnant air? | bar with two sliders that redefine "stagnant" live |
 | Smog seasons | Is each winter worse? | box plot of daily means; winters with < 75% data greyed out |
 
-Interactivity: Threshold, Moving Average and two stagnation parameters; a Season filter shared by the KPIs, AQI mix and smog clock; month highlight actions; clicking a winter in the box plot filters the weather charts.
+Interactivity: Threshold, Moving Average and two stagnation parameters; a Season filter shared by the KPIs and the AQI mix (the smog clock always shows all 12 months); hovering a month highlights it in both monthly charts; clicking a winter in the box plot filters the weather charts.
 
 **A forecast was left out on purpose.** With a four-month gap in 2022, one site and a feed that stopped in 2025, an exponential-smoothing forecast would look precise without being reliable.
 

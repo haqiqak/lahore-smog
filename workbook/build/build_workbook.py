@@ -75,9 +75,10 @@ e.add_calculated_field("Air Condition",
                        "ELSEIF [Wind Speed (km/h)] < [Stagnant Wind Below (km/h)] AND [Boundary Layer Height (m)] < [Stagnant Mixing Height Below (m)] THEN 'Stagnant'\n"
                        "ELSE 'Ventilated' END", datatype="string", role="dimension", field_type="nominal")
 e.add_calculated_field("Season Coverage", "{FIXED [Smog Season] : COUNT([PM25]) / COUNT([Date Time])}", datatype="real", default_format="p0%")
-e.add_calculated_field("Coverage Quality", "IF [Season Coverage] >= 0.75 THEN 'Well measured (75%+ of hours)' "
-                       "ELSE 'Patchy data (under 75% of hours)' END", datatype="string", role="dimension", field_type="nominal")
+e.add_calculated_field("Winter Coverage", "IF [Season Coverage] >= 0.75 THEN '75% or more of hours' "
+                       "ELSE 'Under 75% of hours' END", datatype="string", role="dimension", field_type="nominal")
 e.add_calculated_field("Month", "DATENAME('month', [Date Time])", datatype="string", role="dimension", field_type="ordinal")
+e.add_calculated_field("Month (short)", "LEFT(DATENAME('month', [Date Time]), 3)", datatype="string", role="dimension", field_type="ordinal")
 
 e.add_calculated_field("Complete Day Flag", "[Daily Valid Hours] >= 18", datatype="boolean", role="dimension", field_type="nominal")
 e.add_calculated_field("Threshold Line", "FLOAT([Threshold (ug/m3)])", datatype="real")
@@ -113,14 +114,14 @@ e.configure_layered_chart(
 
 # 3. Smog clock heatmap (hour x month)
 e.add_worksheet("Smog Clock")
-e.configure_chart("Smog Clock", mark_type="Square", columns=["MONTH(Date Time)"], rows=["Hour of Day"],
-                  color="AVG(PM25)", tooltip=["Hours Measured"], filters=[{"column": "Season"}])
+e.configure_chart("Smog Clock", mark_type="Square", columns=["Month (short)"], rows=["Hour of Day"],
+                  color="AVG(PM25)", tooltip=["Hours Measured"])
 e.configure_worksheet_style("Smog Clock", hide_col_field_labels=True, color_style={"field": "AVG(PM25)",
                   "colors": ["#FFF4E0", "#F7C873", "#E8743B", "#B03A2E", "#4A1416"]})
 
 # 4. AQI mix by month (composition / comparison)
 e.add_worksheet("AQI Mix by Month")
-e.configure_chart("AQI Mix by Month", mark_type="Bar", columns=["MONTH(Date Time)"], rows=["Share of Hours"],
+e.configure_chart("AQI Mix by Month", mark_type="Bar", columns=["Month (short)"], rows=["Share of Hours"],
                   color="AQI Category", color_map=EPA, tooltip=["Hours Measured"], text_format={"Share of Hours": "p0%"},
                   filters=[{"column": "Data Status", "values": ["Valid", "Suspect spike"]}, {"column": "Season"}],
                   table_calc_overrides={"Share of Hours": [{"ordering_field": "AQI Category", "ordering_type": "Field"}]})
@@ -131,7 +132,7 @@ e.configure_worksheet_style("AQI Mix by Month", hide_col_field_labels=True)
 e.add_worksheet("Mixing Height vs PM2.5")
 e.configure_layered_chart(
     "Mixing Height vs PM2.5", columns=["AVG(Boundary Layer Height (m))"], rows=["AVG(PM25)"],
-    panes=[{"mark_type": "Circle", "detail": "DAYTRUNC(Date Time)", "color": "MONTH(Date Time)",
+    panes=[{"mark_type": "Circle", "detail": "DAYTRUNC(Date Time)", "color": "Month",
             "tooltip": ["AVG(Wind Speed (km/h))"], "trendline": {"fit": "log", "exclude_color": True}}],
     filters=[SMOG, {"column": "Complete Day Flag", "values": ["true"]}])
 
@@ -146,28 +147,28 @@ e.configure_worksheet_style("Stagnant vs Ventilated", hide_row_field_labels=True
 # 7. Smog seasons: distribution of daily means (box plot added in post-processing)
 e.add_worksheet("Smog Seasons")
 e.configure_chart("Smog Seasons", mark_type="Circle", columns=["Smog Season"], rows=["AVG(PM25)"],
-                  detail="DAYTRUNC(Date Time)", color="Coverage Quality",
-                  color_map={"Well measured (75%+ of hours)": "#B03A2E", "Patchy data (under 75% of hours)": "#BFC5CC"},
+                  detail="DAYTRUNC(Date Time)", color="Winter Coverage",
+                  color_map={"75% or more of hours": "#B03A2E", "Under 75% of hours": "#BFC5CC"},
                   filters=[{"column": "Complete Day Flag", "values": ["true"]},
                            {"column": "Smog Season", "values": ["2019-20", "2020-21", "2021-22", "2022-23", "2023-24", "2024-25"]}])
 
-OVERVIEW = [k[0] for k in KPI] + ["Smog Clock", "AQI Mix by Month"]
+OVERVIEW = [k[0] for k in KPI] + ["AQI Mix by Month"]  # the heatmap always shows all 12 months
 e.link_worksheet_filters("Season", OVERVIEW)
 
 # Reference lines
 e.add_reference_line("Daily Trend", axis_field="AVG(PM25)", value_field="AVG(Threshold Line)", formula="average",
                      label_type="custom", label="Selected limit", pane_index=1)
 e.add_reference_line("Smog Seasons", axis_field="AVG(PM25)", value_field="AVG(Threshold Line)", formula="average",
-                     label_type="custom", label="Selected limit")
+                     label_type="none")
 
 # Titles that state the finding
 TITLES = {
  "Daily Trend": "Every winter PM2.5 climbs from October and peaks in Dec-Jan",
- "Smog Clock": "Smog season: midnight air ~1.6x dirtier than at 3-5 PM",
+ "Smog Clock": "Oct-Jan: midnight ~1.6x dirtier than 3-5 PM",
  "AQI Mix by Month": "Nov-Jan: 97% of hours are Unhealthy or worse",
  "Mixing Height vs PM2.5": "A shallow mixing layer traps smog (one dot = one smog-season day)",
  "Stagnant vs Ventilated": "Still, low-mixing air is dirtier",
- "Smog Seasons": "The two most recent, well-measured winters were the worst (daily means)",
+ "Smog Seasons": "The two most recent, well-measured winters were the worst (daily means; line = selected limit)",
 }
 for k, v in TITLES.items():
     e.set_worksheet_rich_title(k, [{"text": v, "fontsize": "12", "bold": True, "fontcolor": "#2B2B2B"}])
@@ -176,13 +177,12 @@ for sheet, *_ in KPI:
 
 # Dashboards
 import json
-SRC = ("Data: U.S. Department of State / EPA AirNow monitor at the U.S. Consulate Lahore (via OpenAQ, public domain); "
-       "weather: Open-Meteo.com (ERA5, CC BY 4.0). Hourly, 23 May 2019 - 4 Mar 2025. Missing hours are left as gaps, not filled.")
+SRC = ("Data: U.S. State Department / EPA AirNow monitor at the U.S. Consulate Lahore, via OpenAQ (public domain); weather: Open-Meteo (ERA5, CC BY 4.0). Hourly, 23 May 2019 to 4 Mar 2025.")
 d1 = {"type": "container", "direction": "vertical", "children": [
   {"type": "text", "text": "Lahore's Fifth Season: six years of hourly PM2.5", "font_size": "18", "bold": True, "fixed_size": 36},
   {"type": "container", "direction": "horizontal", "fixed_size": 92, "children": [
       {"type": "worksheet", "name": k[0], "show_title": False} for k in KPI]},
-  {"type": "container", "direction": "horizontal", "fixed_size": 250, "children": [
+  {"type": "container", "direction": "horizontal", "fixed_size": 215, "children": [
       {"type": "worksheet", "name": "Daily Trend", "weight": 5, "fit": "entire"},
       {"type": "container", "direction": "vertical", "fixed_size": 200, "children": [
           {"type": "filter", "worksheet": "AQI Mix by Month", "field": "Season", "mode": "checkdropdown", "fixed_size": 56},
@@ -190,33 +190,35 @@ d1 = {"type": "container", "direction": "vertical", "children": [
           {"type": "paramctrl", "parameter": "Moving Average (days)", "mode": "compact", "fixed_size": 56},
           {"type": "empty"}]}]},
   {"type": "container", "direction": "horizontal", "weight": 1, "children": [
-      {"type": "worksheet", "name": "AQI Mix by Month", "weight": 5, "fit": "entire"},
-      {"type": "color", "worksheet": "AQI Mix by Month", "field": "AQI Category", "fixed_size": 170},
-      {"type": "worksheet", "name": "Smog Clock", "weight": 5, "fit": "entire"},
-      {"type": "color", "worksheet": "Smog Clock", "field": "AVG(PM25)", "fixed_size": 110}]},
-  {"type": "text", "text": SRC, "font_size": "8", "font_color": "#5F6B76", "fixed_size": 22}]}
+      {"type": "worksheet", "name": "AQI Mix by Month", "fixed_size": 470, "fit": "entire"},
+      {"type": "color", "worksheet": "AQI Mix by Month", "field": "AQI Category", "fixed_size": 280},
+      {"type": "container", "direction": "vertical", "weight": 5, "children": [
+          {"type": "worksheet", "name": "Smog Clock", "fit": "entire"},
+          {"type": "color", "worksheet": "Smog Clock", "field": "AVG(PM25)", "fixed_size": 48}]}]},
+  {"type": "text", "text": SRC, "font_size": "8", "font_color": "#5F6B76", "fixed_size": 24}]}
 d2 = {"type": "container", "direction": "vertical", "children": [
   {"type": "text", "text": "Why it gets so bad: weather traps the smog (smog season, Oct-Jan)", "font_size": "18", "bold": True, "fixed_size": 36},
   {"type": "container", "direction": "horizontal", "weight": 1, "children": [
       {"type": "worksheet", "name": "Mixing Height vs PM2.5", "weight": 5, "fit": "entire"},
-      {"type": "color", "worksheet": "Mixing Height vs PM2.5", "field": "MONTH(Date Time)", "fixed_size": 90},
+      {"type": "color", "worksheet": "Mixing Height vs PM2.5", "field": "Month", "fixed_size": 100},
       {"type": "container", "direction": "vertical", "weight": 3, "children": [
           {"type": "worksheet", "name": "Stagnant vs Ventilated", "fit": "entire"},
           {"type": "paramctrl", "parameter": "Stagnant Wind Below (km/h)", "fixed_size": 56},
           {"type": "paramctrl", "parameter": "Stagnant Mixing Height Below (m)", "fixed_size": 56}]}]},
   {"type": "container", "direction": "horizontal", "weight": 1, "children": [
       {"type": "worksheet", "name": "Smog Seasons", "weight": 5, "fit": "entire"},
-      {"type": "color", "worksheet": "Smog Seasons", "field": "Coverage Quality", "fixed_size": 200}]},
-  {"type": "text", "text": "Click a season in the bottom chart to filter the charts above. " + SRC, "font_size": "8", "font_color": "#5F6B76", "fixed_size": 22}]}
+      {"type": "color", "worksheet": "Smog Seasons", "field": "Winter Coverage", "fixed_size": 200}]},
+  {"type": "text", "text": "Click a winter in the bottom chart to filter the charts above. Hours with no mixing-height data (Jan-Jun 2024) are left out of the two weather charts.", "font_size": "8", "font_color": "#5F6B76", "fixed_size": 20},
+  {"type": "text", "text": SRC, "font_size": "8", "font_color": "#5F6B76", "fixed_size": 22}]}
 json.dump(d1, open('workbook/build/d1.json', 'w')); json.dump(d2, open('workbook/build/d2.json', 'w'))
 e.add_dashboard("When and How Bad", width=1280, height=800, layout='workbook/build/d1.json')
 e.add_dashboard("Why: Weather", width=1280, height=800, layout='workbook/build/d2.json')
 
 # Actions
 e.add_dashboard_action("When and How Bad", "highlight", source_sheet="Smog Clock", target_sheet="AQI Mix by Month",
-                       fields=["MONTH(Date Time)"], event_type="on-hover", caption="Highlight month")
+                       fields=["Month (short)"], event_type="on-hover", caption="Highlight month")
 e.add_dashboard_action("When and How Bad", "highlight", source_sheet="AQI Mix by Month", target_sheet="Smog Clock",
-                       fields=["MONTH(Date Time)"], event_type="on-hover", caption="Highlight month (back)")
+                       fields=["Month (short)"], event_type="on-hover", caption="Highlight month (back)")
 e.add_dashboard_action("Why: Weather", "filter", source_sheet="Smog Seasons", target_sheets=["Mixing Height vs PM2.5", "Stagnant vs Ventilated"],
                        fields=["Smog Season"], event_type="on-select", caption="Filter by smog season")
 
